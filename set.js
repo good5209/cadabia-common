@@ -62,7 +62,7 @@ Set.prototype.clone = function() {
 	var self = this;
 	var result = new Set();
 	// just clone elements
-	_.each(self.elements, function (value, key) {result.elements[key] = value});
+	result.elements = _.clone(self.elements);
 	return result;
 }
 
