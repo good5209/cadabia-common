@@ -83,7 +83,7 @@ Oid.prototype.toString = function () {
 	var prefixString = self.getPrefix();
 	prefixString = (prefixString === null
 		? ''
-		: prefixString);
+		: prefixString + ':');
 	
 	var classString = '@' + self.getClass();
 	

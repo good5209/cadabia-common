@@ -44,6 +44,9 @@ Tinytest.add('Oid - getObjects', function (test) {
 	var oid = new Cadabia.Oid('prefix', 'class', 'object');
 	test.equal(oid.getObjects(), ['object']);
 	
+	oid = new Cadabia.Oid('prefix', 'class', ['object']);
+	test.equal(oid.getObjects(), ['object']);
+	
 	oid = new Cadabia.Oid('prefix', 'class', ['object1', 'object2']);
 	test.equal(oid.getObjects(), ['object1', 'object2']);
 	
@@ -81,7 +84,7 @@ Tinytest.add('Oid - toString', function (test) {
 	test.equal(oid.toString(), '@class');
 	
 	oid = new Cadabia.Oid('prefix', 'class', null);
-	test.equal(oid.toString(), 'prefix@class');
+	test.equal(oid.toString(), 'prefix:@class');
 	
 	oid = new Cadabia.Oid(null, 'class', 'object');
 	test.equal(oid.toString(), '@class[object]');
@@ -90,8 +93,8 @@ Tinytest.add('Oid - toString', function (test) {
 	test.equal(oid.toString(), '@class[object1;object2]');
 	
 	oid = new Cadabia.Oid('prefix', 'class', 'object');
-	test.equal(oid.toString(), 'prefix@class[object]');
+	test.equal(oid.toString(), 'prefix:@class[object]');
 	
 	oid = new Cadabia.Oid('prefix', 'class', ['object1', 'object2']);
-	test.equal(oid.toString(), 'prefix@class[object1;object2]');
+	test.equal(oid.toString(), 'prefix:@class[object1;object2]');
 });
