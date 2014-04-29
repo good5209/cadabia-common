@@ -3,22 +3,21 @@
  * Object ID
  * prefix: prefix, clazz: class name, object: object list
  */
-function Oid(prefix, clazz, objects) {
+function Oid(prefix, clazz, object) {
 	// prefix
-	if (_.isString(prefix)) {
-		this.prefix = prefix;
-	} else {
-		this.prefix = null;
-	}
+	this.prefix = (_.isString(prefix)
+		? prefix
+		: null);
 	
 	// class
-	if (_.isString(clazz)) {
-		this.class = clazz;
-	}
+	this.class = (_.isString(clazz)
+		? clazz
+		: null);
 	
 	// objects
-	this.objects = [];
-	this.addObjects(objects);
+	this.object = (_.isString(object)
+		? object
+		: null);
 }
 
 // static method
@@ -37,20 +36,6 @@ Oid.parseJson = function (json) {
 
 // instance method
 /*
- * add objects into this Oid
- */
-Oid.prototype.addObjects = function(objects) {
-	var self = this;
-	if (!_.isArray(objects)) { // convert argument to array
-		var objects = [objects];
-	}
-	self.objects = _.union(
-		self.objects,
-		_.filter(objects, _.isString)); // keep string elements only
-	self.objects.sort();
-}
-
-/*
  * get prefix string
  */
 Oid.prototype.getPrefix = function () {
@@ -67,12 +52,8 @@ Oid.prototype.getClass = function () {
 /*
  * get objects string array
  */
-Oid.prototype.getObjects = function () {
-	var self = this;
-	return (
-		_.isEmpty(self.objects)
-		? null
-		: self.objects);
+Oid.prototype.getObject = function () {
+	return this.object;
 }
 
 /*
@@ -87,18 +68,12 @@ Oid.prototype.toString = function () {
 	
 	var classString = '@' + self.getClass();
 	
-	var objectsString = self.getObjects();
-	objectsString = (objectsString === null
+	var objectString = self.getObject();
+	objectString = (objectString === null
 		? ''
-		: '['
-			// concatenate all objects as string, between with ';'
-			+ _.reduce(
-				_.rest(objectsString), // remain elements
-				function (memo, each) {return memo + ';' + each;}, // concat function
-				_.first(objectsString)) // first element
-			+ ']');
+		: '[' + objectString + ']');
 	
-	return prefixString + classString + objectsString;
+	return prefixString + classString + objectString;
 }
 
 // export
