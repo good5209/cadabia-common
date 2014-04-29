@@ -2,6 +2,7 @@
 /*
  * Object ID
  * prefix: prefix, clazz: class name, object: object list
+ * throws: throw exception when class name is invalid
  */
 function Oid(prefix, clazz, object) {
 	// prefix
@@ -10,9 +11,11 @@ function Oid(prefix, clazz, object) {
 		: null);
 	
 	// class
-	this.class = (_.isString(clazz)
-		? clazz
-		: null);
+	if (_.isString(clazz)) {
+		this.class = clazz;
+	} else {
+		throw 'Oid class name cannot be null';
+	}
 	
 	// objects
 	this.object = (_.isString(object)
