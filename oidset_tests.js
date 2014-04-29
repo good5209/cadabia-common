@@ -106,7 +106,7 @@ Tinytest.add('OidSet - equals', function (test) {
 	test.isTrue(set2.equals(set1));
 	
 	var oid1 = new Cadabia.Oid('prefix', 'class1', 'object');
-	var oid2 = new Cadabia.Oid('prefix', 'class2', ['object1', 'object2']);
+	var oid2 = new Cadabia.Oid('prefix', 'class2', null);
 	var oid3 = new Cadabia.Oid('prefix', 'class3', 'object2');
 	
 	set1.add(oid1);
@@ -139,7 +139,7 @@ Tinytest.add('OidSet - clone', function (test) {
 	test.isTrue(set.isEmpty());
 	
 	var oid1 = new Cadabia.Oid('prefix', 'class1', 'object');
-	var oid2 = new Cadabia.Oid('prefix', 'class2', ['object1', 'object2']);
+	var oid2 = new Cadabia.Oid('prefix', 'class2', null);
 	set.add(oid1);
 	set.add(oid2);
 	var cloneSet = set.clone();
@@ -166,7 +166,7 @@ Tinytest.add('OidSet - size', function (test) {
 	test.equal(set.size(), 0);
 	
 	var oid1 = new Cadabia.Oid('prefix', 'class1', 'object');
-	var oid2 = new Cadabia.Oid('prefix', 'class2', ['object1', 'object2']);
+	var oid2 = new Cadabia.Oid('prefix', 'class2', null);
 	var oid3 = new Cadabia.Oid('prefix', 'class1', 'object2');
 	set.add(oid1);
 	set.add(oid2);
@@ -189,8 +189,8 @@ Tinytest.add('OidSet - each', function (test) {
 	var set = new Cadabia.OidSet();
 
 	var oid1 = new Cadabia.Oid('prefix', 'class1', 'object');
-	var oid2 = new Cadabia.Oid('prefix', 'class2', ['object1', 'object2']);
-	var oid3 = new Cadabia.Oid('prefix', 'class3', 'object2');
+	var oid2 = new Cadabia.Oid('prefix', 'class2', 'object2');
+	var oid3 = new Cadabia.Oid('prefix', 'class3', 'object3');
 	set.add(oid1);
 	set.add(oid2);
 	set.add(oid3);
@@ -203,10 +203,10 @@ Tinytest.add('OidSet - each', function (test) {
 	set.add(oid2);
 	set.add(oid3);
 	var oid12 = new Cadabia.Oid('prefix', 'class12', 'object');
-	var oid22 = new Cadabia.Oid('prefix', 'class22', ['object1', 'object2']);
-	var oid32 = new Cadabia.Oid('prefix', 'class32', 'object2');
+	var oid22 = new Cadabia.Oid('prefix', 'class22', 'object2');
+	var oid32 = new Cadabia.Oid('prefix', 'class32', 'object3');
 	set.each(function (oid) { // append '2' after each Oid class name
-		set.add(new Cadabia.Oid(oid.getPrefix(), oid.getClass() + '2', oid.getObjects()));
+		set.add(new Cadabia.Oid(oid.getPrefix(), oid.getClass() + '2', oid.getObject()));
 	});
 	test.isTrue(set.contains(oid12));
 	test.isTrue(set.contains(oid22));
