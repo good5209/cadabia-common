@@ -172,16 +172,16 @@ Tinytest.add('Set - each', function (test) {
 	set.add('a');
 	set.add('b');
 	set.add('c');
-	set.each(function (value) {
-		set.remove(value);
+	set.each(function (element) {
+		set.remove(element);
 	});
 	test.isTrue(set.isEmpty());
 	
 	set.add('a');
 	set.add('b');
 	set.add('c');
-	set.each(function (value) {
-		set.add(value + '2');
+	set.each(function (element) {
+		set.add(element + '2');
 	});
 	test.isTrue(set.contains('a2'));
 	test.isTrue(set.contains('b2'));

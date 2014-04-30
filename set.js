@@ -76,10 +76,13 @@ Set.prototype.size = function() {
 
 /*
  * apply function with every elements
+ * function: function (eachElement)
  */
 Set.prototype.each = function(fun) {
 	var self = this;
-	return _.each(self.elements, fun);
+	if (_.isFunction(fun)) {
+		_.each(_.values(self.elements), fun);
+	}
 }
 
 /*
@@ -99,13 +102,13 @@ Set.prototype.intersection = function(set) {
 	var self = this;
 	var result = new Set();
 	if (self.size() < set.size()) {
-		self.each(function (value, key) {
+		_.each(self.elements, function (value, key) {
 			if (set.contains(value)) {
 				result.elements[key] = value;
 			}
 		});
 	} else {
-		set.each(function (value, key) {
+		_.each(set.elements, function (value, key) {
 			if (self.contains(value)) {
 				result.elements[key] = value;
 			}
