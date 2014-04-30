@@ -107,10 +107,11 @@ OidSet.prototype.size = function() {
 
 /*
  * apply function with every elements
+ * no return value
  */
 OidSet.prototype.each = function(fun) {
 	var self = this;
-	return _.each(
+	_.each(
 		self.elements,
 		function (set) {set.each(fun);} // call each set.each()
 	);
