@@ -52,7 +52,7 @@ Set.prototype.isEmpty = function() {
  */
 Set.prototype.equals = function(set) {
 	var self = this;
-	return _.isEqual(self, set);
+	return _.isEqual(self.elements, set.elements);
 }
 
 /*
