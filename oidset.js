@@ -5,7 +5,7 @@ function OidSet() {
 	 * see: http://blog.iamjason.com/2012/01/javascriptprototype.html
 	 *
 	 * elements is a set of sets
-	 * each 'elements[oid.prefix + oid.class]' is a set,
+	 * each 'elements[oid.prefix + oid.class]' is a set of oids,
 	 * store every oid with same prefix and class name
 	 */
 	this.elements = {};
@@ -29,7 +29,7 @@ OidSet.prototype.add = function(obj) {
 	var self = this;
 	var key = OidSet.objectKey(obj);
 	if (_.isUndefined(self.elements[key])) {
-		self.elements[key] = new Cadabia.Set();
+		self.elements[key] = new Cadabia.Set(); // set of oids
 	}
 	return self.elements[key].add(obj);
 }
@@ -107,14 +107,16 @@ OidSet.prototype.size = function() {
 
 /*
  * apply function with every elements
- * no return value
+ * function: function (eachOid)
  */
 OidSet.prototype.each = function(fun) {
 	var self = this;
-	_.each(
-		self.elements,
-		function (set) {set.each(fun);} // call each set.each()
-	);
+	if (_.isFunction(fun)) {
+		_.each(
+			self.elements,
+			function (set) {set.each(fun);} // call each set.each()
+		);
+	}
 }
 
 /*
