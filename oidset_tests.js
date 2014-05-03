@@ -293,3 +293,268 @@ Tinytest.add('OidSet - toString', function (test) {
 	test.equal(set.toString(), '');
 });
 */
+
+Tinytest.add('OidSet.ObjectSet - new ObjectSet', function (test) {
+	test.isNotNull(new Cadabia.OidSet.ObjectSet());
+});
+
+Tinytest.add('OidSet.ObjectSet - check type', function (test) {
+	var set = new Cadabia.OidSet.ObjectSet();
+	test.equal(typeof(set), 'object');
+	test.instanceOf(set, Cadabia.Set);
+	test.instanceOf(set, Cadabia.OidSet.ObjectSet);
+});
+
+Tinytest.add('OidSet.ObjectSet - check field', function (test) {
+	var set = new Cadabia.OidSet.ObjectSet();
+	test.notEqual(set.elements, 'undefined');
+	test.notEqual(set.excludes, 'undefined');
+	test.equal(set.elements, {});
+	test.equal(set.excludes, {});
+});
+
+Tinytest.add('OidSet.ObjectSet - contains', function (test) {
+	var set = new Cadabia.OidSet.ObjectSet();
+	test.isFalse(set.contains('a'));
+	test.isFalse(set.contains('b'));
+	test.isFalse(set.contains(null));
+	
+	set.elements[Cadabia.Set.objectKey('a')] = 'a';
+	test.isTrue(set.contains('a'));
+	test.isFalse(set.contains('b'));
+	test.isFalse(set.contains(null));
+	
+	set.elements[Cadabia.Set.objectKey('b')] = 'b';
+	test.isTrue(set.contains('a'));
+	test.isTrue(set.contains('b'));
+	test.isFalse(set.contains(null));
+	
+	set.elements[Cadabia.Set.objectKey(null)] = null;
+	test.isTrue(set.contains('a'));
+	test.isTrue(set.contains('b'));
+	test.isTrue(set.contains(null));
+	
+	set = new Cadabia.OidSet.ObjectSet();
+	test.isFalse(set.contains('a'));
+	test.isFalse(set.contains('b'));
+	test.isFalse(set.contains(null));
+	
+	set.elements[Cadabia.Set.objectKey(null)] = null;
+	test.isTrue(set.contains('a'));
+	test.isTrue(set.contains('b'));
+	test.isTrue(set.contains(null));
+});
+
+Tinytest.add('OidSet.ObjectSet - add', function (test) {
+	var set = new Cadabia.OidSet.ObjectSet();
+	test.isFalse(set.contains('a'));
+	test.isTrue(set.add('a'));
+	test.isTrue(set.contains('a'));
+	test.isFalse(set.add('a')); // add again
+	
+	test.isFalse(set.contains('b'));
+	test.isTrue(set.add('b'));
+	test.isTrue(set.contains('b'));
+	test.isFalse(set.add('b')); // add again
+	
+	test.isFalse(set.contains(null));
+	test.isTrue(set.add(null));
+	test.isTrue(set.contains(null));
+	test.isFalse(set.add(null)); // add again
+	
+	test.isTrue(set.contains('c'));
+	test.isFalse(set.add('c')); // null mean all objects in this class
+	test.isTrue(set.contains('c'));
+	
+	set = new Cadabia.OidSet.ObjectSet();
+	test.isFalse(set.contains('a'));
+	test.isFalse(set.contains('b'));
+	test.isFalse(set.contains(null));
+	
+	test.isTrue(set.add(null));
+	test.isTrue(set.contains('a'));
+	test.isTrue(set.contains('b'));
+	test.isTrue(set.contains(null));
+});
+
+Tinytest.add('OidSet.ObjectSet - remove', function (test) {
+	var set = new Cadabia.OidSet.ObjectSet();
+	test.isFalse(set.contains('a'));
+	test.isFalse(set.contains('b'));
+	test.isFalse(set.remove('a'));
+	test.isFalse(set.remove('b'));
+	test.isFalse(set.remove(null));
+	
+	set.add('a');
+	set.add('b');
+	test.isTrue(set.contains('a'));
+	test.isTrue(set.contains('b'));
+	
+	test.isTrue(set.remove('a'));
+	test.isFalse(set.contains('a'));
+	test.isTrue(set.contains('b'));
+	test.isFalse(set.remove('a')); // remove again
+	
+	test.isTrue(set.remove('b'));
+	test.isFalse(set.contains('a'));
+	test.isFalse(set.contains('b'));
+	test.isFalse(set.remove('b')); // remove again
+	
+	set.add(null);
+	test.isTrue(set.contains('a'));
+	test.isTrue(set.contains('b'));
+	test.isTrue(set.contains('c'));
+	test.isTrue(set.contains(null));
+	
+	test.isTrue(set.remove('a'));
+	test.isFalse(set.contains('a'));
+	test.isTrue(set.contains('b'));
+	test.isTrue(set.contains('c'));
+	test.isFalse(set.contains(null));
+	test.isFalse(set.remove('a')); // remove again
+	
+	test.isTrue(set.remove('b'));
+	test.isFalse(set.contains('a'));
+	test.isFalse(set.contains('b'));
+	test.isTrue(set.contains('c'));
+	test.isFalse(set.contains(null));
+	test.isFalse(set.remove('b')); // remove again
+	
+	test.isTrue(set.remove(null));
+	test.isFalse(set.contains('a'));
+	test.isFalse(set.contains('b'));
+	test.isFalse(set.contains('c'));
+	test.isFalse(set.contains(null));
+	test.isFalse(set.remove(null)); // remove again
+});
+
+Tinytest.add('OidSet.ObjectSet - isEmpty', function (test) {
+	var set = new Cadabia.OidSet.ObjectSet();
+	test.isTrue(set.isEmpty());
+	
+	set.add('a');
+	test.isFalse(set.isEmpty());
+	
+	set.remove('a');
+	test.isTrue(set.isEmpty());
+	
+	set.add('a');
+	set.add('b');
+	test.isFalse(set.isEmpty());
+	
+	set.remove(null);
+	test.isTrue(set.isEmpty());
+});
+
+Tinytest.add('OidSet.ObjectSet - equals', function (test) {
+	var set1 = new Cadabia.OidSet.ObjectSet();
+	var set2 = new Cadabia.OidSet.ObjectSet();
+	test.isTrue(set1.equals(set1));
+	test.isTrue(set1.equals(set2));
+	test.isTrue(set2.equals(set1));
+	
+	set1.add('a');
+	test.isTrue(set1.equals(set1));
+	test.isFalse(set1.equals(set2));
+	test.isFalse(set2.equals(set1));
+	
+	set2.add('a');
+	test.isTrue(set2.equals(set2));
+	test.isTrue(set1.equals(set2));
+	test.isTrue(set2.equals(set1));
+	
+	set1.remove('b');
+	test.isTrue(set1.equals(set2));
+	test.isTrue(set2.equals(set1));
+	
+	set1.add(null);
+	test.isFalse(set1.equals(set2));
+	test.isFalse(set2.equals(set1));
+	
+	set2.add(null);
+	test.isTrue(set1.equals(set2));
+	test.isTrue(set2.equals(set1));
+	
+	set1.remove('a');
+	set2.remove('b');
+	test.isFalse(set1.equals(set2));
+	test.isFalse(set2.equals(set1));
+	
+	set1.remove('b');
+	set2.remove('a');
+	test.isTrue(set1.equals(set2));
+	test.isTrue(set2.equals(set1));
+	
+	set1.add(null);
+	test.isFalse(set1.equals(set2));
+	test.isFalse(set2.equals(set1));
+	
+	set1.remove(null);
+	test.isFalse(set1.equals(set2));
+	test.isFalse(set2.equals(set1));
+	
+	set2.remove(null);
+	test.isTrue(set1.equals(set2));
+	test.isTrue(set2.equals(set1));
+});
+
+Tinytest.add('OidSet.ObjectSet - clone', function (test) {
+	var set = new Cadabia.OidSet.ObjectSet();
+	test.isTrue(set.isEmpty());
+	
+	set.add('a');
+	set.add('b');
+	var cloneSet = set.clone();
+	test.isTrue(cloneSet.contains('a'));
+	test.isTrue(cloneSet.contains('b'));
+	test.isTrue(set.equals(cloneSet));
+	test.isTrue(cloneSet.equals(set));
+	
+	set.remove('a');
+	test.isTrue(cloneSet.contains('a'));
+	test.isTrue(cloneSet.contains('b'));
+	test.isFalse(set.equals(cloneSet));
+	test.isFalse(cloneSet.equals(set));
+	
+	cloneSet.remove('a');
+	test.isFalse(cloneSet.contains('a'));
+	test.isTrue(cloneSet.contains('b'));
+	test.isTrue(set.equals(cloneSet));
+	test.isTrue(cloneSet.equals(set));
+	
+	set = new Cadabia.OidSet.ObjectSet();
+	set.add(null);
+	set.remove('a');
+	set.remove('b');
+	var cloneSet = set.clone();
+	test.isFalse(cloneSet.contains('a'));
+	test.isFalse(cloneSet.contains('b'));
+	test.isTrue(cloneSet.contains('c'));
+	test.isTrue(set.equals(cloneSet));
+	test.isTrue(cloneSet.equals(set));
+	
+	set.remove('c');
+	test.isFalse(cloneSet.contains('a'));
+	test.isFalse(cloneSet.contains('b'));
+	test.isTrue(cloneSet.contains('c'));
+	test.isFalse(set.equals(cloneSet));
+	test.isFalse(cloneSet.equals(set));
+	
+	cloneSet.remove('c');
+	test.isFalse(cloneSet.contains('a'));
+	test.isFalse(cloneSet.contains('b'));
+	test.isFalse(cloneSet.contains('c'));
+	test.isTrue(cloneSet.contains('d'));
+	test.isTrue(set.equals(cloneSet));
+	test.isTrue(cloneSet.equals(set));
+});
+
+Tinytest.add('OidSet.ObjectSet - size', function (test) {
+	try {
+		var set = new Cadabia.OidSet.ObjectSet();
+		set.size();
+		test.isFalse(true, 'ObjectSet.size() should be fail');
+	} catch (e) {
+		test.isFalse(false);
+	}
+});

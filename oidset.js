@@ -172,3 +172,129 @@ OidSet.objectKey = function (oid) {
 
 // export
 Cadabia.OidSet = OidSet;
+
+/*
+ * ObjectSet
+ * contain same "prefix, class name"'s objects
+ * supported 'all objects' symbol
+ */
+// constructor
+function ObjectSet() {
+	this.elements = {};
+	this.excludes = {}; // exclude objects
+}
+ObjectSet.prototype = new Cadabia.Set();
+ObjectSet.prototype.constructor = ObjectSet;
+OidSet.ObjectSet = ObjectSet;
+
+// instance method
+/*
+ * add elemenet to set
+ * return true: success, false: element already added
+ */
+ObjectSet.prototype.add = function(obj) {
+	var self = this;
+	var key = Cadabia.Set.objectKey(obj);
+	
+	if (!self.contains(obj)) {
+		// all objects
+		if (obj === null) {
+			self.elements = {};
+			self.elements[key] = obj;
+			self.excludes = {};
+			return true;
+		}
+		// other object
+		if (_.has(self.excludes, key)) { // in exclude
+			delete self.excludes[key];
+		} else {
+			self.elements[key] = obj;
+		}
+		return true;
+	}
+	return false;
+}
+
+/*
+ * remove element from set
+ * return true: success, false: element not exist
+ */
+ObjectSet.prototype.remove = function(obj) {
+	var self = this;
+	var key = Cadabia.Set.objectKey(obj);
+	
+	// all object
+	if (obj === null) {
+		if (!_.isEmpty(self.elements)) {
+			// clear whole set
+			self.elements = {};
+			self.excludes = {};
+			return true;
+		}
+		return false;
+	}
+	// other object
+	if (_.has(self.elements, key)) {
+		delete self.elements[key];
+		return true;
+	} else if (_.has(self.elements, null) // contain all objects
+		&& !_.has(self.excludes, key)) { // not yet exclude this object
+		self.excludes[key] = obj;
+		return true;
+	}
+	return false;
+}
+
+/*
+ * check set contain such element
+ */
+ObjectSet.prototype.contains = function(obj) {
+	var self = this;
+	var objectKey = Cadabia.Set.objectKey;
+	var key = objectKey(obj);
+	
+	// all object
+	if (obj === null) {
+		return (_.has(self.elements, key) // contain all objects
+			&& _.isEmpty(self.excludes)); // and no any exclude object
+	}
+	// other object
+	return (_.has(self.elements, key)
+		// include null object mean all objects
+		|| (_.has(self.elements, objectKey(null))
+			// and exclude this object
+			&& !_.has(self.excludes, key)));
+}
+
+/*
+ * check set is empty
+ * ObjectSet.prototype.isEmpty = function()
+ */
+
+/*
+ * check this set is equal to another set
+ */
+ObjectSet.prototype.equals = function(set) {
+	var self = this;
+	return (_.isEqual(self.elements, set.elements)
+		&& _.isEqual(self.excludes, set.excludes));
+}
+
+/*
+ * clone all contain elements to a new set
+ */
+ObjectSet.prototype.clone = function() {
+	var self = this;
+	var result = new ObjectSet();
+	// just clone elements
+	result.elements = _.clone(self.elements);
+	result.excludes = _.clone(self.excludes);
+	return result;
+}
+
+/*
+ * count elements
+ */
+ObjectSet.prototype.size = function() {
+	throw 'ObjectSet.size() is not suppot';
+}
