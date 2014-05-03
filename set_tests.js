@@ -15,13 +15,12 @@ Tinytest.add('Set - check field', function (test) {
 });
 
 Tinytest.add('Set - objectKey', function (test) {
-	test.equal(Cadabia.Set.objectKey('a'), 'String:"a"');
-	test.equal(Cadabia.Set.objectKey('b'), 'String:"b"');
-	test.equal(Cadabia.Set.objectKey({}), 'Object:{}');
-	
-	var obj = {};
-	obj.key = "value";
-	test.equal(Cadabia.Set.objectKey(obj), 'Object:{"key":"value"}');
+	test.equal(Cadabia.Set.objectKey(null), 'null'); // null
+	test.equal(Cadabia.Set.objectKey('a'), 'String:"a"'); // string
+	test.equal(Cadabia.Set.objectKey(0), 'Number:0'); // number
+	test.equal(Cadabia.Set.objectKey([1, 2, 3]), 'Array:[1,2,3]'); // array
+	test.equal(Cadabia.Set.objectKey({'k':'key', 'v':'value'}), 'Object:{"k":"key","v":"value"}'); // object
+	test.equal(Cadabia.Set.objectKey(new Cadabia.Set()), 'Set:{"elements":{}}'); // class object
 });
 
 Tinytest.add('Set - contains', function (test) {

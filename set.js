@@ -132,7 +132,9 @@ Set.prototype.difference = function(set) {
  * generate element's key string, for identify elements
  */
 Set.objectKey = function (obj) {
-	return obj.constructor.name + ":" + JSON.stringify(obj);
+	return ((obj !== null)
+		? obj.constructor.name + ":" + JSON.stringify(obj)
+		: 'null');
 }
 
 // export
