@@ -28,7 +28,7 @@ OidSet.prototype.constructor = OidSet;
 OidSet.prototype.add = function(obj) {
 	var self = this;
 	var key = OidSet.objectKey(obj);
-	if (_.isUndefined(self.elements[key])) {
+	if (!_.has(self.elements, key)) {
 		self.elements[key] = new Cadabia.Set(); // set of oids
 	}
 	return self.elements[key].add(obj);
@@ -41,11 +41,10 @@ OidSet.prototype.add = function(obj) {
 OidSet.prototype.remove = function(obj) {
 	var self = this;
 	var key = OidSet.objectKey(obj);
-	var set = self.elements[key];
-	if (!_.isUndefined(set)
-		&& (set instanceof Cadabia.Set)
-		&& set.remove(obj)) {
-		if (set.isEmpty()) { // delete set when it is empty
+	if (_.has(self.elements, key)
+		&& (self.elements[key] instanceof Cadabia.Set)
+		&& self.elements[key].remove(obj)) {
+		if (self.elements[key].isEmpty()) { // delete set when it is empty
 			delete self.elements[key];
 		}
 		return true;
@@ -58,10 +57,10 @@ OidSet.prototype.remove = function(obj) {
  */
 OidSet.prototype.contains = function(obj) {
 	var self = this;
-	var set = self.elements[OidSet.objectKey(obj)];
-	return (!_.isUndefined(set)
-		&& (set instanceof Cadabia.Set)
-		&& set.contains(obj));
+	var key = OidSet.objectKey(obj);
+	return (_.has(self.elements, key)
+		&& (self.elements[key] instanceof Cadabia.Set)
+		&& self.elements[key].contains(obj));
 }
 
 /*
