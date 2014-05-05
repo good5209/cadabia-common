@@ -35,7 +35,7 @@ OidSet.prototype.add = function(obj) {
 }
 
 /*
- * remove element to set
+ * remove element from set
  * return true: success, false: element not exist
  */
 OidSet.prototype.remove = function(obj) {
