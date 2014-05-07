@@ -291,6 +291,35 @@ Tinytest.add('OidSet - difference', function (test) {
 	test.instanceOf(differentSet, Cadabia.OidSet);
 });
 
+Tinytest.add('OidSet - test sorted elements', function (test) {
+	var set = new Cadabia.OidSet();
+	var oids = [
+		[new Cadabia.Oid('p1', 'c1', 'o1'),
+			new Cadabia.Oid('p1', 'c1', 'o2'),
+			new Cadabia.Oid('p1', 'c1', 'o3')],
+		[new Cadabia.Oid('p1', 'c3', 'o1'),
+			new Cadabia.Oid('p1', 'c3', 'o2'),
+			new Cadabia.Oid('p1', 'c3', 'o3')],
+		[new Cadabia.Oid('p2', 'c1', 'o1'),
+			new Cadabia.Oid('p2', 'c1', 'o2'),
+			new Cadabia.Oid('p2', 'c1', 'o3')]
+	];
+	
+	set.add(oids[1][2]);
+	set.add(oids[1][0]);
+	set.add(oids[1][1]);
+	set.add(oids[0][2]);
+	set.add(oids[0][1]);
+	set.add(oids[0][0]);
+	set.add(oids[2][0]);
+	set.add(oids[2][2]);
+	set.add(oids[2][1]);
+	
+	var result = [];
+	set.each(function (oid) {result.push(oid);});
+	test.equal(result, _.flatten(oids));
+});
+
 /*
 Tinytest.add('OidSet - toString', function (test) {
 	var set = new Cadabia.OidSet();
