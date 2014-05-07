@@ -1,4 +1,8 @@
 // constructor
+/*
+ * OidSet
+ * set of Oids
+ */
 function OidSet() {
 	/*
 	 * field can't inherit
