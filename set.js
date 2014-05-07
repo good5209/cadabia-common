@@ -1,4 +1,8 @@
 // constructor
+/*
+ * Set
+ * in set every elements are uniquely
+ */
 function Set() {
 	this.elements = {};
 }
