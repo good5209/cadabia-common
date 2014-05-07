@@ -47,7 +47,7 @@ OidSet.prototype.remove = function(obj) {
 	var key = OidSet.objectKey(obj);
 	var set = self.elements[key];
 	if (!_.isUndefined(set)
-		&& (set instanceof Cadabia.Set)
+		&& (set instanceof Cadabia.SortedSet)
 		&& set.remove(obj)) {
 		if (set.isEmpty()) { // delete set when it is empty
 			delete self.elements[key];
@@ -64,7 +64,7 @@ OidSet.prototype.contains = function(obj) {
 	var self = this;
 	var set = self.elements[OidSet.objectKey(obj)];
 	return (!_.isUndefined(set)
-		&& (set instanceof Cadabia.Set)
+		&& (set instanceof Cadabia.SortedSet)
 		&& set.contains(obj));
 }
 
