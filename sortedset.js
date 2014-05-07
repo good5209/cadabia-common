@@ -52,5 +52,38 @@ SortedSet.prototype.add = function(obj) {
 	return false;
 }
 
+/*
+ * clone all contain elements to a new set
+ */
+SortedSet.prototype.clone = function() {
+	var self = this;
+	var result = new SortedSet();
+	// just clone elements
+	result.elements = _.clone(self.elements);
+	return result;
+}
+
+/*
+ * intersection with another set
+ */
+SortedSet.prototype.intersection = function(set) {
+	var self = this;
+	var result = new SortedSet();
+	if (self.size() < set.size()) {
+		_.each(self.elements, function (value, key) {
+			if (set.contains(value)) {
+				result.elements[key] = value;
+			}
+		});
+	} else {
+		_.each(set.elements, function (value, key) {
+			if (self.contains(value)) {
+				result.elements[key] = value;
+			}
+		});
+	}
+	return result;
+}
+
 // export
 Cadabia.SortedSet = SortedSet;
