@@ -143,6 +143,7 @@ Tinytest.add('OidSet - clone', function (test) {
 	set.add(oid1);
 	set.add(oid2);
 	var cloneSet = set.clone();
+	test.instanceOf(cloneSet, Cadabia.OidSet);
 	test.isTrue(cloneSet.contains(oid1));
 	test.isTrue(cloneSet.contains(oid2));
 	test.isTrue(set.equals(cloneSet));
@@ -236,6 +237,7 @@ Tinytest.add('OidSet - union', function (test) {
 	set3.add(oid5);
 	
 	var unionSet = set1.union(set2);
+	test.instanceOf(unionSet, Cadabia.OidSet);
 	test.isTrue(unionSet.equals(set3));
 	test.instanceOf(unionSet, Cadabia.OidSet);
 });
@@ -259,6 +261,7 @@ Tinytest.add('OidSet - intersection', function (test) {
 	set3.add(oid2);
 	
 	var intersectSet = set1.intersection(set2);
+	test.instanceOf(intersectSet, Cadabia.OidSet);
 	test.isTrue(intersectSet.equals(set3));
 	test.instanceOf(intersectSet, Cadabia.OidSet);
 });
@@ -283,6 +286,7 @@ Tinytest.add('OidSet - difference', function (test) {
 	set3.add(oid3);
 	
 	var differentSet = set1.difference(set2);
+	test.instanceOf(differentSet, Cadabia.OidSet);
 	test.isTrue(differentSet.equals(set3));
 	test.instanceOf(differentSet, Cadabia.OidSet);
 });
