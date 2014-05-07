@@ -33,7 +33,7 @@ OidSet.prototype.add = function(obj) {
 	var self = this;
 	var key = OidSet.objectKey(obj);
 	if (_.isUndefined(self.elements[key])) {
-		self.elements[key] = new Cadabia.Set(); // set of oids
+		self.elements[key] = new Cadabia.SortedSet(); // set of oids
 	}
 	return self.elements[key].add(obj);
 }
