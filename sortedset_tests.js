@@ -137,7 +137,7 @@ Tinytest.add('SortedSet - clone', function (test) {
 	set.add('a');
 	set.add('b');
 	var cloneSet = set.clone();
-	test.isTrue(cloneSet instanceof Cadabia.SortedSet);
+	test.instanceOf(cloneSet, Cadabia.SortedSet);
 	test.isTrue(cloneSet.contains('a'));
 	test.isTrue(cloneSet.contains('b'));
 	test.isTrue(set.equals(cloneSet));
@@ -206,7 +206,7 @@ Tinytest.add('SortedSet - union', function (test) {
 	set3.add('e');
 	
 	var unionSet = set1.union(set2);
-	test.isTrue(unionSet instanceof Cadabia.SortedSet);
+	test.instanceOf(unionSet, Cadabia.SortedSet);
 	test.isTrue(unionSet.equals(set3));
 });
 
@@ -223,7 +223,7 @@ Tinytest.add('SortedSet - intersection', function (test) {
 	set3.add('b');
 	
 	var intersectSet = set1.intersection(set2);
-	test.isTrue(intersectSet instanceof Cadabia.SortedSet);
+	test.instanceOf(intersectSet, Cadabia.SortedSet);
 	test.isTrue(intersectSet.equals(set3));
 });
 
@@ -241,7 +241,7 @@ Tinytest.add('SortedSet - difference', function (test) {
 	set3.add('c');
 	
 	var differentSet = set1.difference(set2);
-	test.isTrue(differentSet instanceof Cadabia.SortedSet);
+	test.instanceOf(differentSet, Cadabia.SortedSet);
 	test.isTrue(differentSet.equals(set3));
 });
 
