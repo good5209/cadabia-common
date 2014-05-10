@@ -32,17 +32,27 @@ OidSet.prototype.constructor = OidSet;
 OidSet.prototype.add = function(obj) {
 	var self = this;
 	var key = OidSet.objectKey(obj);
-	if (_.isUndefined(self.elements[key])) {
-		self.elements[key] = new Cadabia.SortedSet(); // set of oids
-		
-		self.elements = _.reduce(
-			_.pairs(self.elements).sort(OidSet.elementCompare), // get all element pairs, and sort them
-			function (memo, each) { // add sorted pairs to new object
-				memo[each[0]] = each[1];
-				return memo;
-			}, {});
+	if (!self.contains(obj)) {
+		if (_.isUndefined(self.elements[key])) {
+			// set of oids
+			self.elements[key] = new Cadabia.SortedSet();
+			
+			// sort elements
+			self.elements = _.reduce(
+				_.pairs(self.elements).sort(OidSet.elementCompare),
+				function (memo, each) {
+					memo[each[0]] = each[1];
+					return memo;
+				}, {});
+		}
+		// add all objects in this class, and this class has some objects
+		if ((obj.getObject() === null) && !self.elements[key].isEmpty()) {
+			// clear this class
+			self.elements[key] = new Cadabia.SortedSet();
+		}
+		return self.elements[key].add(obj.getObject());
 	}
-	return self.elements[key].add(obj.getObject());
+	return false;
 }
 
 /*
@@ -55,8 +65,10 @@ OidSet.prototype.remove = function(obj) {
 	var set = self.elements[key];
 	if (!_.isUndefined(set)
 		&& (set instanceof Cadabia.SortedSet)
+		// try remove object
 		&& set.remove(obj.getObject())) {
-		if (set.isEmpty()) { // delete set when it is empty
+		// delete set when it already empty
+		if (set.isEmpty()) {
 			delete self.elements[key];
 		}
 		return true;
@@ -72,7 +84,10 @@ OidSet.prototype.contains = function(obj) {
 	var set = self.elements[OidSet.objectKey(obj)];
 	return (!_.isUndefined(set)
 		&& (set instanceof Cadabia.SortedSet)
-		&& set.contains(obj.getObject()));
+		// this set contains all objects
+		&& (set.contains(null)
+			// or contains specify object
+			|| set.contains(obj.getObject())));
 }
 
 /*

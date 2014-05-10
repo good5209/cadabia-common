@@ -50,16 +50,15 @@ Tinytest.add('OidSet - add', function (test) {
 	test.isFalse(set.add(oid2)); // add again
 	
 	var oid3 = new Cadabia.Oid('prefix', 'class', 'object');
-	test.isFalse(set.contains(oid3));
-	test.isTrue(set.add(oid3));
 	test.isTrue(set.contains(oid3));
-	test.isFalse(set.add(oid3)); // add again
+	test.isFalse(set.add(oid3)); // set already contain this object
 });
 
 Tinytest.add('OidSet - remove', function (test) {
 	var set = new Cadabia.OidSet();
 	var oid1 = new Cadabia.Oid(null, 'class', null);
 	var oid2 = new Cadabia.Oid('prefix', 'class', null);
+	var oid3 = new Cadabia.Oid('prefix', 'class', 'object');
 	
 	test.isFalse(set.contains(oid1));
 	test.isFalse(set.contains(oid2));
@@ -80,6 +79,20 @@ Tinytest.add('OidSet - remove', function (test) {
 	test.isFalse(set.contains(oid1));
 	test.isFalse(set.contains(oid2));
 	test.isFalse(set.remove(oid2)); // remove again
+	
+	test.isFalse(set.contains(oid3));
+	set.add(oid3);
+	test.isFalse(set.contains(oid2));
+	test.isTrue(set.contains(oid3));
+	
+	set.add(oid2);
+	test.isTrue(set.contains(oid2));
+	test.isTrue(set.contains(oid3));
+	
+	set.remove(oid2); // null object mean all objects
+	test.isFalse(set.contains(oid2));
+	test.isFalse(set.contains(oid3));
+	
 });
 
 Tinytest.add('OidSet - isEmpty', function (test) {
