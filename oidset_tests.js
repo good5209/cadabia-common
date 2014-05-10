@@ -88,6 +88,7 @@ Tinytest.add('OidSet - remove', function (test) {
 	set.add(oid2);
 	test.isTrue(set.contains(oid2));
 	test.isTrue(set.contains(oid3));
+	test.isFalse(set.remove(oid3)); // reject remove single object in contain all objects set
 	
 	set.remove(oid2); // null object mean all objects
 	test.isFalse(set.contains(oid2));
