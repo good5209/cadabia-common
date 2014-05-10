@@ -36,7 +36,7 @@ OidSet.prototype.add = function(obj) {
 		self.elements[key] = new Cadabia.SortedSet(); // set of oids
 		
 		self.elements = _.reduce(
-			_.pairs(self.elements).sort(), // get all element pairs, and sort them
+			_.pairs(self.elements).sort(OidSet.elementCompare), // get all element pairs, and sort them
 			function (memo, each) { // add sorted pairs to new object
 				memo[each[0]] = each[1];
 				return memo;
@@ -175,7 +175,32 @@ OidSet.prototype.toString = function () {
  * generate element's key, for identify elements
  */
 OidSet.objectKey = function (oid) {
-	return [oid.getPrefix(), oid.getClass()];
+	return JSON.stringify({
+		prefix: oid.getPrefix(),
+		class: oid.getClass()
+	});
+}
+/*
+ * elements sort's custom compare function
+ * if 'null' exist, it will first
+ */
+OidSet.elementCompare = function(a, b) {
+	// convert key (json string) to object
+	var a = [JSON.parse(a[0]), a[1]];
+	var b = [JSON.parse(b[0]), b[1]];
+	if (a[0].prefix === '') {
+		return -1;
+	} else if (b[0].prefix === '') {
+		return 1;
+	}
+	var aString = a[0].prefix + '-' + a[0].class;
+	var bString = b[0].prefix + '-' + b[0].class;
+	if (aString > bString) {
+		return 1;
+	} else if (aString < bString) {
+		return -1;
+	}
+	return 0;
 }
 
 // export
