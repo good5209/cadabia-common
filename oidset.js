@@ -172,7 +172,7 @@ OidSet.prototype.toString = function () {
 
 // static method
 /*
- * generate element's key string, for identify elements
+ * generate element's key, for identify elements
  */
 OidSet.objectKey = function (oid) {
 	return [oid.getPrefix(), oid.getClass()];

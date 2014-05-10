@@ -294,6 +294,9 @@ Tinytest.add('OidSet - difference', function (test) {
 Tinytest.add('OidSet - test sorted elements', function (test) {
 	var set = new Cadabia.OidSet();
 	var oids = [
+		[new Cadabia.Oid(null, 'c2', 'o1'),
+			new Cadabia.Oid(null, 'c2', 'o2'),
+			new Cadabia.Oid(null, 'c2', 'o3')],
 		[new Cadabia.Oid('p1', 'c1', 'o1'),
 			new Cadabia.Oid('p1', 'c1', 'o2'),
 			new Cadabia.Oid('p1', 'c1', 'o3')],
@@ -308,6 +311,9 @@ Tinytest.add('OidSet - test sorted elements', function (test) {
 	set.add(oids[1][2]);
 	set.add(oids[1][0]);
 	set.add(oids[1][1]);
+	set.add(oids[3][1]);
+	set.add(oids[3][2]);
+	set.add(oids[3][0]);
 	set.add(oids[0][2]);
 	set.add(oids[0][1]);
 	set.add(oids[0][0]);
