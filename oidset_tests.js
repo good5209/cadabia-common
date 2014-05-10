@@ -24,13 +24,13 @@ Tinytest.add('OidSet - contains', function (test) {
 	test.isFalse(set.contains(oid1));
 	// such element is a set, that set contain added Oid
 	(set.elements[Cadabia.OidSet.objectKey(oid1)] = new Cadabia.SortedSet())
-		.add(oid1);
+		.add(oid1.getObject());
 	test.isTrue(set.contains(oid1));
 	
 	var oid2 = new Cadabia.Oid('prefix', 'class', null);
 	test.isFalse(set.contains(oid2));
 	(set.elements[Cadabia.OidSet.objectKey(oid2)] = new Cadabia.SortedSet())
-		.add(oid2);
+		.add(oid2.getObject());
 	test.isTrue(set.contains(oid2));
 });
 

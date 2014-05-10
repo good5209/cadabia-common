@@ -42,7 +42,7 @@ OidSet.prototype.add = function(obj) {
 				return memo;
 			}, {});
 	}
-	return self.elements[key].add(obj);
+	return self.elements[key].add(obj.getObject());
 }
 
 /*
@@ -55,7 +55,7 @@ OidSet.prototype.remove = function(obj) {
 	var set = self.elements[key];
 	if (!_.isUndefined(set)
 		&& (set instanceof Cadabia.SortedSet)
-		&& set.remove(obj)) {
+		&& set.remove(obj.getObject())) {
 		if (set.isEmpty()) { // delete set when it is empty
 			delete self.elements[key];
 		}
@@ -72,7 +72,7 @@ OidSet.prototype.contains = function(obj) {
 	var set = self.elements[OidSet.objectKey(obj)];
 	return (!_.isUndefined(set)
 		&& (set instanceof Cadabia.SortedSet)
-		&& set.contains(obj));
+		&& set.contains(obj.getObject()));
 }
 
 /*
@@ -123,10 +123,20 @@ OidSet.prototype.size = function() {
 OidSet.prototype.each = function(fun) {
 	var self = this;
 	if (_.isFunction(fun)) {
-		_.each(
-			self.elements,
-			function (set) {set.each(fun);} // call each set.each()
-		);
+		var setsOids = _.map(self.elements, function (set, key) {
+			// convert json string key to object
+			var key = JSON.parse(key);
+			// collect all elements in this set
+			var setElements = [];
+			set.each(function (element) {setElements.push(element)});
+			// generate Oid objects
+			return _.map(setElements, function (element) {
+				return new Cadabia.Oid(key.prefix, key.class, element);
+			});
+		});
+		
+		// apply fun on each oids
+		_.each(_.flatten(setsOids), function (oid) {fun(oid);});
 	}
 }
 
@@ -188,9 +198,9 @@ OidSet.elementCompare = function(a, b) {
 	// convert key (json string) to object
 	var a = [JSON.parse(a[0]), a[1]];
 	var b = [JSON.parse(b[0]), b[1]];
-	if (a[0].prefix === '') {
+	if (a[0].prefix === null) {
 		return -1;
-	} else if (b[0].prefix === '') {
+	} else if (b[0].prefix === null) {
 		return 1;
 	}
 	var aString = a[0].prefix + '-' + a[0].class;
