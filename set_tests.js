@@ -16,6 +16,7 @@ Tinytest.add('Set - check field', function (test) {
 
 Tinytest.add('Set - objectKey', function (test) {
 	test.equal(Cadabia.Set.objectKey(null), 'null'); // null
+	test.equal(Cadabia.Set.objectKey('null'), 'String:"null"'); // null string
 	test.equal(Cadabia.Set.objectKey('a'), 'String:"a"'); // string
 	test.equal(Cadabia.Set.objectKey(0), 'Number:0'); // number
 	test.equal(Cadabia.Set.objectKey([1, 2, 3]), 'Array:[1,2,3]'); // array
