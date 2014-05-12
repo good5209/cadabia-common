@@ -188,6 +188,15 @@ OidSet.prototype.intersection = function(set) {
  */
 
 /*
+ * get this OidSet all oids json array
+ */
+OidSet.prototype.toJSON = function () {
+	var result = [];
+	this.each(function (oid) {result.push(oid);});
+	return result;
+}
+
+/*
  * get this OidSet string format
  */
 // TODO

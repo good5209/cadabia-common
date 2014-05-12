@@ -305,8 +305,10 @@ Tinytest.add('OidSet - difference', function (test) {
 	test.instanceOf(differentSet, Cadabia.OidSet);
 });
 
-Tinytest.add('OidSet - test sorted elements', function (test) {
+Tinytest.add('OidSet - toJSON', function (test) {
 	var set = new Cadabia.OidSet();
+	test.equal(set.toJSON(), []);
+	
 	var oids = [
 		[new Cadabia.Oid(null, 'c2', 'o1'),
 			new Cadabia.Oid(null, 'c2', 'o2'),
@@ -335,9 +337,7 @@ Tinytest.add('OidSet - test sorted elements', function (test) {
 	set.add(oids[2][2]);
 	set.add(oids[2][1]);
 	
-	var result = [];
-	set.each(function (oid) {result.push(oid);});
-	test.equal(result, _.flatten(oids));
+	test.equal(set.toJSON(), _.flatten(oids));
 });
 
 /*
