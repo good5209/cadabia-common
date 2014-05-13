@@ -310,6 +310,7 @@ Tinytest.add('OidSet - toJSON', function (test) {
 	test.equal(set.toJSON(), []);
 	
 	var oids = [
+		[new Cadabia.Oid(null, 'c1', null)],
 		[new Cadabia.Oid(null, 'c2', 'o1'),
 			new Cadabia.Oid(null, 'c2', 'o2'),
 			new Cadabia.Oid(null, 'c2', 'o3')],
@@ -324,18 +325,19 @@ Tinytest.add('OidSet - toJSON', function (test) {
 			new Cadabia.Oid('p2', 'c1', 'o3')]
 	];
 	
-	set.add(oids[1][2]);
-	set.add(oids[1][0]);
-	set.add(oids[1][1]);
-	set.add(oids[3][1]);
-	set.add(oids[3][2]);
-	set.add(oids[3][0]);
-	set.add(oids[0][2]);
-	set.add(oids[0][1]);
-	set.add(oids[0][0]);
-	set.add(oids[2][0]);
 	set.add(oids[2][2]);
+	set.add(oids[2][0]);
 	set.add(oids[2][1]);
+	set.add(oids[0][0]);
+	set.add(oids[4][1]);
+	set.add(oids[4][2]);
+	set.add(oids[4][0]);
+	set.add(oids[1][2]);
+	set.add(oids[1][1]);
+	set.add(oids[1][0]);
+	set.add(oids[3][0]);
+	set.add(oids[3][2]);
+	set.add(oids[3][1]);
 	
 	test.equal(set.toJSON(), _.flatten(oids));
 });

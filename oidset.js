@@ -222,7 +222,9 @@ OidSet.elementCompare = function(a, b) {
 	// convert key (json string) to object
 	var a = [JSON.parse(a[0]), a[1]];
 	var b = [JSON.parse(b[0]), b[1]];
-	if (a[0].prefix === null) {
+	if ((a[0].prefix === null) && (b[0].prefix === null)) {
+		// both null prefix, continue compare class name
+	} else 	if (a[0].prefix === null) {
 		return -1;
 	} else if (b[0].prefix === null) {
 		return 1;
