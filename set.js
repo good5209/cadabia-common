@@ -74,8 +74,7 @@ Set.prototype.clone = function() {
  * count elements
  */
 Set.prototype.size = function() {
-	var self = this;
-	return _.keys(self.elements).length;
+	return _.size(this.elements);
 }
 
 /*

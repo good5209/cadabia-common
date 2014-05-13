@@ -23,14 +23,14 @@ Tinytest.add('OidSet - contains', function (test) {
 	var oid1 = new Cadabia.Oid(null, 'class', null);
 	test.isFalse(set.contains(oid1));
 	// such element is a set, that set contain added Oid
-	(set.elements[Cadabia.OidSet.objectKey(oid1)] = new Cadabia.Set())
-		.add(oid1);
+	(set.elements[Cadabia.OidSet.objectKey(oid1)] = new Cadabia.SortedSet())
+		.add(oid1.getObject());
 	test.isTrue(set.contains(oid1));
 	
 	var oid2 = new Cadabia.Oid('prefix', 'class', null);
 	test.isFalse(set.contains(oid2));
-	(set.elements[Cadabia.OidSet.objectKey(oid2)] = new Cadabia.Set())
-		.add(oid2);
+	(set.elements[Cadabia.OidSet.objectKey(oid2)] = new Cadabia.SortedSet())
+		.add(oid2.getObject());
 	test.isTrue(set.contains(oid2));
 });
 
@@ -50,16 +50,15 @@ Tinytest.add('OidSet - add', function (test) {
 	test.isFalse(set.add(oid2)); // add again
 	
 	var oid3 = new Cadabia.Oid('prefix', 'class', 'object');
-	test.isFalse(set.contains(oid3));
-	test.isTrue(set.add(oid3));
 	test.isTrue(set.contains(oid3));
-	test.isFalse(set.add(oid3)); // add again
+	test.isFalse(set.add(oid3)); // set already contain this object
 });
 
 Tinytest.add('OidSet - remove', function (test) {
 	var set = new Cadabia.OidSet();
 	var oid1 = new Cadabia.Oid(null, 'class', null);
 	var oid2 = new Cadabia.Oid('prefix', 'class', null);
+	var oid3 = new Cadabia.Oid('prefix', 'class', 'object');
 	
 	test.isFalse(set.contains(oid1));
 	test.isFalse(set.contains(oid2));
@@ -80,6 +79,21 @@ Tinytest.add('OidSet - remove', function (test) {
 	test.isFalse(set.contains(oid1));
 	test.isFalse(set.contains(oid2));
 	test.isFalse(set.remove(oid2)); // remove again
+	
+	test.isFalse(set.contains(oid3));
+	set.add(oid3);
+	test.isFalse(set.contains(oid2));
+	test.isTrue(set.contains(oid3));
+	
+	set.add(oid2);
+	test.isTrue(set.contains(oid2));
+	test.isTrue(set.contains(oid3));
+	test.isFalse(set.remove(oid3)); // reject remove single object in contain all objects set
+	
+	set.remove(oid2); // null object mean all objects
+	test.isFalse(set.contains(oid2));
+	test.isFalse(set.contains(oid3));
+	
 });
 
 Tinytest.add('OidSet - isEmpty', function (test) {
@@ -143,6 +157,7 @@ Tinytest.add('OidSet - clone', function (test) {
 	set.add(oid1);
 	set.add(oid2);
 	var cloneSet = set.clone();
+	test.instanceOf(cloneSet, Cadabia.OidSet);
 	test.isTrue(cloneSet.contains(oid1));
 	test.isTrue(cloneSet.contains(oid2));
 	test.isTrue(set.equals(cloneSet));
@@ -236,6 +251,7 @@ Tinytest.add('OidSet - union', function (test) {
 	set3.add(oid5);
 	
 	var unionSet = set1.union(set2);
+	test.instanceOf(unionSet, Cadabia.OidSet);
 	test.isTrue(unionSet.equals(set3));
 	test.instanceOf(unionSet, Cadabia.OidSet);
 });
@@ -259,6 +275,7 @@ Tinytest.add('OidSet - intersection', function (test) {
 	set3.add(oid2);
 	
 	var intersectSet = set1.intersection(set2);
+	test.instanceOf(intersectSet, Cadabia.OidSet);
 	test.isTrue(intersectSet.equals(set3));
 	test.instanceOf(intersectSet, Cadabia.OidSet);
 });
@@ -283,13 +300,170 @@ Tinytest.add('OidSet - difference', function (test) {
 	set3.add(oid3);
 	
 	var differentSet = set1.difference(set2);
+	test.instanceOf(differentSet, Cadabia.OidSet);
 	test.isTrue(differentSet.equals(set3));
 	test.instanceOf(differentSet, Cadabia.OidSet);
 });
 
-/*
+Tinytest.add('OidSet - toJSON', function (test) {
+	var set = new Cadabia.OidSet();
+	test.equal(set.toJSON(), []);
+	
+	var oids = [
+		[new Cadabia.Oid(null, 'c1', null)],
+		[new Cadabia.Oid(null, 'c2', 'o1'),
+			new Cadabia.Oid(null, 'c2', 'o2'),
+			new Cadabia.Oid(null, 'c2', 'o3')],
+		[new Cadabia.Oid('null', 'c2', 'o1'),
+			new Cadabia.Oid('null', 'c2', 'o2'),
+			new Cadabia.Oid('null', 'c2', 'o3')],
+		[new Cadabia.Oid('p1', 'c1', 'o1'),
+			new Cadabia.Oid('p1', 'c1', 'o2'),
+			new Cadabia.Oid('p1', 'c1', 'o3')],
+		[new Cadabia.Oid('p1', 'c3', 'o1'),
+			new Cadabia.Oid('p1', 'c3', 'o2'),
+			new Cadabia.Oid('p1', 'c3', 'o3')],
+		[new Cadabia.Oid('p2', 'c1', 'o1'),
+			new Cadabia.Oid('p2', 'c1', 'o2'),
+			new Cadabia.Oid('p2', 'c1', 'o3')]
+	];
+	
+	set.add(oids[2][2]);
+	set.add(oids[2][0]);
+	set.add(oids[2][1]);
+	set.add(oids[0][0]);
+	set.add(oids[4][1]);
+	set.add(oids[4][2]);
+	set.add(oids[4][0]);
+	set.add(oids[1][2]);
+	set.add(oids[1][1]);
+	set.add(oids[1][0]);
+	set.add(oids[5][0]);
+	set.add(oids[5][1]);
+	set.add(oids[5][2]);
+	set.add(oids[3][0]);
+	set.add(oids[3][2]);
+	set.add(oids[3][1]);
+	
+	test.equal(set.toJSON(), _.flatten(oids));
+});
+
 Tinytest.add('OidSet - toString', function (test) {
 	var set = new Cadabia.OidSet();
 	test.equal(set.toString(), '');
+	
+	var oids = [
+		[new Cadabia.Oid(null, 'c1', null)],
+		[new Cadabia.Oid(null, 'c2', 'o1'),
+			new Cadabia.Oid(null, 'c2', 'o2'),
+			new Cadabia.Oid(null, 'c2', 'o3')],
+		[new Cadabia.Oid('null', 'c2', 'o1'),
+			new Cadabia.Oid('null', 'c2', 'o2'),
+			new Cadabia.Oid('null', 'c2', 'o3')],
+		[new Cadabia.Oid('p1', 'c1', 'o1'),
+			new Cadabia.Oid('p1', 'c1', 'o2'),
+			new Cadabia.Oid('p1', 'c1', 'o3')],
+		[new Cadabia.Oid('p1', 'c3', 'o1'),
+			new Cadabia.Oid('p1', 'c3', 'o2'),
+			new Cadabia.Oid('p1', 'c3', 'o3')],
+		[new Cadabia.Oid('p2', 'c1', 'o1'),
+			new Cadabia.Oid('p2', 'c1', 'o2'),
+			new Cadabia.Oid('p2', 'c1', 'o3')]
+	];
+	_.each(_.flatten(oids), function (oid) {set.add(oid);});
+	test.equal(set.toString(), '@c1;c2[o1;o2;o3];null:@c2[o1;o2;o3];p1:@c1[o1;o2;o3];c3[o1;o2;o3];p2:@c1[o1;o2;o3]');
+	
+	set = new Cadabia.OidSet();
+	var oidc1 = new Cadabia.Oid(null, 'class1', null);
+	var oidc1o1 = new Cadabia.Oid(null, 'class1', 'object1');
+	var oidc1o2 = new Cadabia.Oid(null, 'class1', 'object2');
+	var oidc2 = new Cadabia.Oid(null, 'class2', null);
+	var oidc2o1 = new Cadabia.Oid(null, 'class2', 'object1');
+	var oidc2o2 = new Cadabia.Oid(null, 'class2', 'object2');
+	
+	var oidp1c1 = new Cadabia.Oid('prefix1', 'class1', null);
+	var oidp1c1o1 = new Cadabia.Oid('prefix1', 'class1', 'object1');
+	var oidp1c1o2 = new Cadabia.Oid('prefix1', 'class1', 'object2');
+	var oidp1c2 = new Cadabia.Oid('prefix1', 'class2', null);
+	var oidp1c2o1 = new Cadabia.Oid('prefix1', 'class2', 'object1');
+	var oidp1c2o2 = new Cadabia.Oid('prefix1', 'class2', 'object2');
+	
+	var oidp2c1 = new Cadabia.Oid('prefix2', 'class1', null);
+	var oidp2c1o1 = new Cadabia.Oid('prefix2', 'class1', 'object1');
+	var oidp2c1o2 = new Cadabia.Oid('prefix2', 'class1', 'object2');
+	
+	set.add(oidc1);
+	test.equal(set.toString(), '@class1');
+	
+	set.add(oidc1o1); // add object in contain all objects set
+	test.equal(set.toString(), '@class1');
+	
+	set.remove(oidc1);
+	set.add(oidc1o1);
+	test.equal(set.toString(), '@class1[object1]');
+	
+	set.add(oidc1o2);
+	test.equal(set.toString(), '@class1[object1;object2]');
+	
+	set.add(oidc1); // add all objects
+	test.equal(set.toString(), '@class1');
+	
+	set = new Cadabia.OidSet();
+	set.add(oidc1);
+	set.add(oidc2);
+	test.equal(set.toString(), '@class1;class2');
+	
+	set.remove(oidc2);
+	set.add(oidc2o2);
+	test.equal(set.toString(), '@class1;class2[object2]');
+	
+	set = new Cadabia.OidSet();
+	set.add(oidc1);
+	set.add(oidp1c1);
+	test.equal(set.toString(), '@class1;prefix1:@class1');
+	
+	set.remove(oidc1);
+	set.add(oidc1o1);
+	test.equal(set.toString(), '@class1[object1];prefix1:@class1');
+	
+	set.add(oidc2o2);
+	test.equal(set.toString(), '@class1[object1];class2[object2];prefix1:@class1');
+	
+	set.remove(oidp1c1);
+	set.add(oidp1c1o1);
+	test.equal(set.toString(), '@class1[object1];class2[object2];prefix1:@class1[object1]');
+	
+	set.add(oidp1c2);
+	test.equal(set.toString(), '@class1[object1];class2[object2];prefix1:@class1[object1];class2');
+	
+	set.remove(oidp1c2);
+	set.add(oidp1c2o2);
+	test.equal(set.toString(), '@class1[object1];class2[object2];prefix1:@class1[object1];class2[object2]');
+	
+	set.add(oidp1c1o2);
+	set.add(oidp1c2o1);
+	test.equal(set.toString(), '@class1[object1];class2[object2];prefix1:@class1[object1;object2];class2[object1;object2]');
+	
+	set.remove(oidp1c1o2);
+	set.remove(oidp1c2o1);
+	set.add(oidp2c1);
+	test.equal(set.toString(), '@class1[object1];class2[object2];prefix1:@class1[object1];class2[object2];prefix2:@class1');
+	
+	set.remove(oidp2c1);
+	set.add(oidp2c1o1);
+	test.equal(set.toString(), '@class1[object1];class2[object2];prefix1:@class1[object1];class2[object2];prefix2:@class1[object1]');
+	
+	set.add(oidc1o2);
+	set.add(oidc2o1);
+	set.add(oidp1c1o2);
+	set.add(oidp1c2o1);
+	set.add(oidp2c1o2);
+	test.equal(set.toString(), '@class1[object1;object2];class2[object1;object2];prefix1:@class1[object1;object2];class2[object1;object2];prefix2:@class1[object1;object2]');
+	
+	set.add(oidc1);
+	set.add(oidc2);
+	set.add(oidp1c1);
+	set.add(oidp1c2);
+	set.add(oidp2c1);
+	test.equal(set.toString(), '@class1;class2;prefix1:@class1;class2;prefix2:@class1');
 });
-*/
