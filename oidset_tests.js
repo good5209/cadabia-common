@@ -348,9 +348,122 @@ Tinytest.add('OidSet - toJSON', function (test) {
 	test.equal(set.toJSON(), _.flatten(oids));
 });
 
-/*
 Tinytest.add('OidSet - toString', function (test) {
 	var set = new Cadabia.OidSet();
 	test.equal(set.toString(), '');
+	
+	var oids = [
+		[new Cadabia.Oid(null, 'c1', null)],
+		[new Cadabia.Oid(null, 'c2', 'o1'),
+			new Cadabia.Oid(null, 'c2', 'o2'),
+			new Cadabia.Oid(null, 'c2', 'o3')],
+		[new Cadabia.Oid('null', 'c2', 'o1'),
+			new Cadabia.Oid('null', 'c2', 'o2'),
+			new Cadabia.Oid('null', 'c2', 'o3')],
+		[new Cadabia.Oid('p1', 'c1', 'o1'),
+			new Cadabia.Oid('p1', 'c1', 'o2'),
+			new Cadabia.Oid('p1', 'c1', 'o3')],
+		[new Cadabia.Oid('p1', 'c3', 'o1'),
+			new Cadabia.Oid('p1', 'c3', 'o2'),
+			new Cadabia.Oid('p1', 'c3', 'o3')],
+		[new Cadabia.Oid('p2', 'c1', 'o1'),
+			new Cadabia.Oid('p2', 'c1', 'o2'),
+			new Cadabia.Oid('p2', 'c1', 'o3')]
+	];
+	_.each(_.flatten(oids), function (oid) {set.add(oid);});
+	test.equal(set.toString(), '@c1;c2[o1;o2;o3];null:@c2[o1;o2;o3];p1:@c1[o1;o2;o3];c3[o1;o2;o3];p2:@c1[o1;o2;o3]');
+	
+	set = new Cadabia.OidSet();
+	var oidc1 = new Cadabia.Oid(null, 'class1', null);
+	var oidc1o1 = new Cadabia.Oid(null, 'class1', 'object1');
+	var oidc1o2 = new Cadabia.Oid(null, 'class1', 'object2');
+	var oidc2 = new Cadabia.Oid(null, 'class2', null);
+	var oidc2o1 = new Cadabia.Oid(null, 'class2', 'object1');
+	var oidc2o2 = new Cadabia.Oid(null, 'class2', 'object2');
+	
+	var oidp1c1 = new Cadabia.Oid('prefix1', 'class1', null);
+	var oidp1c1o1 = new Cadabia.Oid('prefix1', 'class1', 'object1');
+	var oidp1c1o2 = new Cadabia.Oid('prefix1', 'class1', 'object2');
+	var oidp1c2 = new Cadabia.Oid('prefix1', 'class2', null);
+	var oidp1c2o1 = new Cadabia.Oid('prefix1', 'class2', 'object1');
+	var oidp1c2o2 = new Cadabia.Oid('prefix1', 'class2', 'object2');
+	
+	var oidp2c1 = new Cadabia.Oid('prefix2', 'class1', null);
+	var oidp2c1o1 = new Cadabia.Oid('prefix2', 'class1', 'object1');
+	var oidp2c1o2 = new Cadabia.Oid('prefix2', 'class1', 'object2');
+	
+	set.add(oidc1);
+	test.equal(set.toString(), '@class1');
+	
+	set.add(oidc1o1); // add object in contain all objects set
+	test.equal(set.toString(), '@class1');
+	
+	set.remove(oidc1);
+	set.add(oidc1o1);
+	test.equal(set.toString(), '@class1[object1]');
+	
+	set.add(oidc1o2);
+	test.equal(set.toString(), '@class1[object1;object2]');
+	
+	set.add(oidc1); // add all objects
+	test.equal(set.toString(), '@class1');
+	
+	set = new Cadabia.OidSet();
+	set.add(oidc1);
+	set.add(oidc2);
+	test.equal(set.toString(), '@class1;class2');
+	
+	set.remove(oidc2);
+	set.add(oidc2o2);
+	test.equal(set.toString(), '@class1;class2[object2]');
+	
+	set = new Cadabia.OidSet();
+	set.add(oidc1);
+	set.add(oidp1c1);
+	test.equal(set.toString(), '@class1;prefix1:@class1');
+	
+	set.remove(oidc1);
+	set.add(oidc1o1);
+	test.equal(set.toString(), '@class1[object1];prefix1:@class1');
+	
+	set.add(oidc2o2);
+	test.equal(set.toString(), '@class1[object1];class2[object2];prefix1:@class1');
+	
+	set.remove(oidp1c1);
+	set.add(oidp1c1o1);
+	test.equal(set.toString(), '@class1[object1];class2[object2];prefix1:@class1[object1]');
+	
+	set.add(oidp1c2);
+	test.equal(set.toString(), '@class1[object1];class2[object2];prefix1:@class1[object1];class2');
+	
+	set.remove(oidp1c2);
+	set.add(oidp1c2o2);
+	test.equal(set.toString(), '@class1[object1];class2[object2];prefix1:@class1[object1];class2[object2]');
+	
+	set.add(oidp1c1o2);
+	set.add(oidp1c2o1);
+	test.equal(set.toString(), '@class1[object1];class2[object2];prefix1:@class1[object1;object2];class2[object1;object2]');
+	
+	set.remove(oidp1c1o2);
+	set.remove(oidp1c2o1);
+	set.add(oidp2c1);
+	test.equal(set.toString(), '@class1[object1];class2[object2];prefix1:@class1[object1];class2[object2];prefix2:@class1');
+	
+	set.remove(oidp2c1);
+	set.add(oidp2c1o1);
+	test.equal(set.toString(), '@class1[object1];class2[object2];prefix1:@class1[object1];class2[object2];prefix2:@class1[object1]');
+	
+	set.add(oidc1o2);
+	set.add(oidc2o1);
+	set.add(oidp1c1o2);
+	set.add(oidp1c2o1);
+	set.add(oidp2c1o2);
+	test.equal(set.toString(), '@class1[object1;object2];class2[object1;object2];prefix1:@class1[object1;object2];class2[object1;object2];prefix2:@class1[object1;object2]');
+	
+	set.add(oidc1);
+	set.add(oidc2);
+	set.add(oidp1c1);
+	set.add(oidp1c2);
+	set.add(oidp2c1);
+	test.equal(set.toString(), '@class1;class2;prefix1:@class1;class2;prefix2:@class1');
 });
-*/

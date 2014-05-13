@@ -199,9 +199,37 @@ OidSet.prototype.toJSON = function () {
 /*
  * get this OidSet string format
  */
-// TODO
 OidSet.prototype.toString = function () {
-	return '';
+	var self = this;
+	var oidList = self.toJSON();
+	
+	var oidTree = _.reduce(
+		// group by prefix name
+		_.groupBy(oidList, function (oid) {return JSON.stringify(oid.prefix)}),
+		function (memo, oids, prefix) {
+			// group by class name
+			memo[prefix] = _.groupBy(oids, function (oid) {return JSON.stringify(oid.class)});
+			return memo;
+		}, {});
+	
+	return _.map(oidTree, function (classNode, prefix) {
+		var prefix = JSON.parse(prefix);
+		return (
+			// prefix string
+			(prefix === null)
+				? '@' // default prefix, mean localhost
+				: prefix + ':@')
+			+ _.map(classNode,
+				function (oids, className) {
+					// class string
+					return JSON.parse(className)
+						+ (!_.some(oids, function (oid) {return oid.object === null;})
+							// not all objects, enumerate contain objects, separate with ';'
+							? '[' + _.map(oids, function (oid) {return oid.object;}).join(';') + ']'
+							// contain all objects
+							: '');
+				}).join(';'); // separate with ';' between class
+	}).join(';'); // separate with ';' between prefix
 }
 
 // static method
