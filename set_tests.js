@@ -1,5 +1,12 @@
 Tinytest.add('Set - new Set', function (test) {
 	test.isNotNull(new Cadabia.Set());
+	
+	try {
+		Cadabia.Set();
+		test.isFalse(true, 'Set() should be fail');
+	} catch (e) {
+		test.isFalse(false);
+	}
 });
 
 Tinytest.add('Set - check type', function (test) {
