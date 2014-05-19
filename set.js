@@ -4,7 +4,11 @@
  * in set every elements are uniquely
  */
 function Set() {
-	this.elements = {};
+	var self = this;
+	if (!(self instanceof Set)) {
+		throw new Error('use "new" to construct a Set');
+	}
+	self.elements = {};
 }
 
 // instance method
