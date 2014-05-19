@@ -1,5 +1,12 @@
 Tinytest.add('SortedSet - new SortedSet', function (test) {
 	test.isNotNull(new Cadabia.SortedSet());
+	
+	try {
+		Cadabia.SortedSet();
+		test.isFalse(true, 'SortedSet() should be fail');
+	} catch (e) {
+		test.isFalse(false);
+	}
 });
 
 Tinytest.add('SortedSet - check type', function (test) {
