@@ -1,5 +1,12 @@
 Tinytest.add('OidSet - new OidSet', function (test) {
 	test.isNotNull(new Cadabia.OidSet());
+	
+	try {
+		Cadabia.OidSet();
+		test.isFalse(true, 'OidSet() should be fail');
+	} catch (e) {
+		test.isFalse(false);
+	}
 });
 
 Tinytest.add('OidSet - check type', function (test) {

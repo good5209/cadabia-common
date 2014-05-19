@@ -4,6 +4,10 @@
  * set of Oids
  */
 function OidSet() {
+	var self = this;
+	if (!(self instanceof OidSet)) {
+		throw new Error('use "new" to construct a OidSet');
+	}
 	/*
 	 * field can't inherit
 	 * see: http://blog.iamjason.com/2012/01/javascriptprototype.html
@@ -12,7 +16,7 @@ function OidSet() {
 	 * each 'elements[oid.prefix + oid.class]' is a set of oids,
 	 * store every oid with same prefix and class name
 	 */
-	this.elements = {};
+	self.elements = {};
 }
 
 // inherit Cadabia.Set
