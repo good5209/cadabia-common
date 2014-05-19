@@ -5,20 +5,24 @@
  * throws: throw exception when class name is invalid
  */
 function Oid(prefix, clazz, object) {
+	var self = this;
+	if (!(self instanceof Oid)) {
+		throw new Error('use "new" to construct a Oid');
+	}
 	// prefix
-	this.prefix = (_.isString(prefix)
+	self.prefix = (_.isString(prefix)
 		? prefix
 		: null);
 	
 	// class
 	if (_.isString(clazz)) {
-		this.class = clazz;
+		self.class = clazz;
 	} else {
 		throw 'Oid class name cannot be null';
 	}
 	
 	// objects
-	this.object = (_.isString(object)
+	self.object = (_.isString(object)
 		? object
 		: null);
 }
