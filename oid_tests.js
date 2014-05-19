@@ -1,5 +1,5 @@
 Tinytest.add('Oid - new Oid', function (test) {
-	new Cadabia.Oid('prefix', 'class', 'object');
+	test.isNotNull(new Cadabia.Oid('prefix', 'class', 'object'));
 	try {
 		new Cadabia.Oid('prefix', null, 'object');
 		test.isFalse(true, 'new Oid() should be fail');
