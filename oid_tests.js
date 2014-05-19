@@ -2,7 +2,14 @@ Tinytest.add('Oid - new Oid', function (test) {
 	new Cadabia.Oid('prefix', 'class', 'object');
 	try {
 		new Cadabia.Oid('prefix', null, 'object');
-		test.isFalse(true, 'new Oid should be fail');
+		test.isFalse(true, 'new Oid() should be fail');
+	} catch (e) {
+		test.isFalse(false);
+	}
+	
+	try {
+		Cadabia.Oid('prefix', 'class', 'object');
+		test.isFalse(true, 'Oid() should be fail');
 	} catch (e) {
 		test.isFalse(false);
 	}
