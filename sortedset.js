@@ -4,7 +4,11 @@
  * set elements are sorted
  */
 function SortedSet() {
-	this.elements = {};
+	var self = this;
+	if (!(self instanceof SortedSet)) {
+		throw new Error('use "new" to construct a SortedSet');
+	}
+	self.elements = {};
 }
 
 // inherit Cadabia.Set
